@@ -127,6 +127,7 @@ export default {
     }
   },
   mounted () {
+    // 加载页面时初始化sid(uuid生成), sid作为验证码的key，验证码的正确值作为value，存储在redis中
     let sid = ''
     if (localStorage.getItem('sid')) {
       sid = localStorage.getItem('sid')

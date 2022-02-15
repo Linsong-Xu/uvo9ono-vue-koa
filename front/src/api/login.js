@@ -5,10 +5,6 @@ import axios from '@/utils/request'
  * @param {*} sid 唯一标识
  */
 const getCode = (sid) => {
-  // axios.request({
-  //  method: 'get',
-  //  url: '/getCaptcha'
-  // })
   return axios.get('/public/getCaptcha', {
     params: {
       sid: sid
@@ -30,6 +26,8 @@ const forget = (option) => {
  * 登录接口
  * @param {*} loginInfo 用户登录信息
  */
+// loginInfo = {username: 'xls56i', password: 'xxxx', code: 'xxxx', sid: 'xxxx'}
+// {...loginInfo} = {username: 'xls56i', password: 'xxxx', code: 'xxxx', sid: 'xxxx'}
 const login = (loginInfo) => {
   return axios.post('/login/login', {
     ...loginInfo

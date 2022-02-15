@@ -5,6 +5,7 @@ import fs from 'fs'
 import path from 'path'
 
 const getJWTPayload = token => {
+  // 因为请求的header中使用的'Bearer ' + token字符串，所以需要token.split(' ')[1]
   return jwt.verify(token.split(' ')[1], config.JWT_SECRET)
 }
 

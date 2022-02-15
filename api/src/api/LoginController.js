@@ -158,6 +158,7 @@ class LoginController {
         arr.map((item) => {
           delete userObj[item]
         })
+        // 生成JWT
         const token = jsonwebtoken.sign({ _id: userObj._id }, config.JWT_SECRET, {
           expiresIn: '1d'
         })

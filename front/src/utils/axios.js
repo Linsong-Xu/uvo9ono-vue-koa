@@ -7,10 +7,12 @@ import publicConfig from '@/config'
 const CancelToken = axios.CancelToken
 
 class HttpRequest {
+
   constructor (baseUrl) {
     this.baseUrl = baseUrl
     this.pending = {}
   }
+
   // 获取axios配置
   getInsideConfig () {
     const config = {
@@ -18,16 +20,19 @@ class HttpRequest {
       headers: {
         'Content-Type': 'application/json;charset=utf-8'
       },
+      // 请求超过10s,则说明请求失败
       timeout: 10000
     }
     return config
   }
+
   removePending (key, isRequest = false) {
     if (this.pending[key] && isRequest) {
       this.pending[key]('取消重复请求')
     }
     delete this.pending[key]
   }
+
   // 设定拦截器
   interceptors (instance) {
     // 请求拦截器
@@ -35,22 +40,23 @@ class HttpRequest {
       // Do something before request is sent
       let isPublic = false
       publicConfig.publicPath.map((path) => {
+        // 正则表达式判断是否需要鉴权
         isPublic = isPublic || path.test(config.url)
       })
       const token = store.state.token
       if (!isPublic && token) {
         config.headers.Authorization = 'Bearer ' + token
       }
+
       let key = config.url + '&' + config.method
       this.removePending(key, true)
       config.cancelToken = new CancelToken((c) => {
         this.pending[key] = c
       })
+
       return config
     }, (err) => {
-      // debugger
       errorHandle(err)
-      // Do something with request error
       return Promise.reject(err)
     })
 
@@ -66,27 +72,30 @@ class HttpRequest {
         return Promise.reject(res)
       }
     }, (err) => {
-      // Any status codes that falls outside the range of 2xx cause this function to trigger
-      // Do something with response error
-      // debugger
       errorHandle(err)
       return Promise.reject(err)
     })
   }
+
   // 创建实例
   request (options) {
     const instance = axios.create()
     const newOptions = Object.assign(this.getInsideConfig(), options)
     this.interceptors(instance)
-    return instance(newOptions)
+    return instance(newOptions) // instance(newOptions) 等价于 instance.request(newOptions)
   }
+
+  // get请求方法
   get (url, config) {
+    // Object.assign() 用于对象的合并
     const options = Object.assign({
       method: 'get',
       url: url
     }, config)
     return this.request(options)
   }
+
+  // post请求方法
   post (url, data) {
     return this.request({
       method: 'post',
